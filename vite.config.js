@@ -1,8 +1,13 @@
+/// <reference types="vitest" />
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
 
 export default defineConfig({
   publicDir: 'public',
+  test: {
+    globals: true,
+    environment: 'node'
+  },
   build: {
     outDir: 'dist',
     emptyOutDir: true,
