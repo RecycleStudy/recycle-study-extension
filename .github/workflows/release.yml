@@ -1,5 +1,9 @@
 name: Release Extension
 
+concurrency:
+  group: ext-release
+  cancel-in-progress: true
+
 on:
   push:
     tags:
@@ -14,6 +18,33 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate tag is on prod branch
+        run: |
+          git fetch origin prod
+          if git merge-base --is-ancestor ${{ github.sha }} origin/prod; then
+            echo "이 태그는 prod branch에 포함되어 있습니다. 릴리즈를 진행합니다."
+          else
+            echo "Error: 이 tag는 prod branch에 없습니다."
+            exit 1
+          fi
+
+      - name: Validate version match
+        run: |
+          TAG_VERSION=$(echo "${{ github.ref_name }}" | sed 's/^v//' | sed 's/-ext$//')
+          MANIFEST_VERSION=$(node -p "require('./public/manifest.json').version")
+
+          echo "Tag version: $TAG_VERSION"
+          echo "Manifest version: $MANIFEST_VERSION"
+
+          if [ "$TAG_VERSION" != "$MANIFEST_VERSION" ]; then
+            echo "Error: 태그 버전($TAG_VERSION)과 manifest.json 버전($MANIFEST_VERSION)이 일치하지 않습니다."
+            exit 1
+          fi
+
+          echo "버전이 일치합니다."
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -23,6 +54,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Run tests
+        run: npm run test:run
 
       - name: Build extension
         run: npm run build
