@@ -9,6 +9,7 @@
     "tabs"
   ],
   "host_permissions": [
+    "https://api.recycle-study.site/*",
     "http://localhost:8080/*"
   ],
   "action": {
