@@ -224,6 +224,24 @@ export async function handleLogout() {
     return;
   }
 
+  try {
+    showLoading();
+    const storageData = await getStorageData();
+    
+    // 인증된 상태라면 서버에 디바이스 삭제 요청
+    if (storageData.email && storageData.identifier) {
+      await deleteDevice(
+        storageData.email, 
+        storageData.identifier, 
+        storageData.identifier // 자기 자신을 삭제
+      );
+    }
+  } catch (error) {
+    console.warn('서버 디바이스 삭제 실패 (로컬 로그아웃은 진행):', error);
+  } finally {
+    hideLoading();
+  }
+
   await clearStorage();
   elements.saveResult.classList.add('hidden');
   elements.devicesSection.classList.add('hidden');

@@ -54,7 +54,8 @@ export async function getDevices(email, identifier) {
   return await sendApiRequest({
     endpoint: '/api/v1/members',
     method: 'GET',
-    params: { email, identifier }
+    params: { email },
+    headers: { 'X-Device-Id': identifier }
   });
 }
 
@@ -68,7 +69,8 @@ export async function deleteDevice(email, deviceIdentifier, targetDeviceIdentifi
   return await sendApiRequest({
     endpoint: '/api/v1/device',
     method: 'DELETE',
-    body: { email, deviceIdentifier, targetDeviceIdentifier }
+    headers: { 'X-Device-Id': deviceIdentifier },
+    body: { email, targetDeviceIdentifier }
   });
 }
 
@@ -82,6 +84,7 @@ export async function saveReviewUrl(identifier, targetUrl) {
   return await sendApiRequest({
     endpoint: '/api/v1/reviews',
     method: 'POST',
-    body: { identifier, targetUrl }
+    headers: { 'X-Device-Id': identifier },
+    body: { targetUrl }
   });
 }
