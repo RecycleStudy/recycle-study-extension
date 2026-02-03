@@ -9,9 +9,8 @@ import {
   elements,
   initializeElements,
   showView,
-  showMessage,
-  hideCycleModal
-} from './ui/index.js';
+  showMessage
+} from './ui.js';
 import {
   handleRegister,
   handleCheckAuth,
@@ -19,15 +18,8 @@ import {
   handleSaveUrl,
   handleShowDevices,
   handleDeleteDevice,
-  handleLogout,
-  handleLoadCycleOptions,
-  handleShowCycleManagement,
-  handleSaveCycle,
-  handleDeleteCycle,
-  handleEditCycle,
-  handleAddCycle,
-  handleAddDuration
-} from './handlers/index.js';
+  handleLogout
+} from './handlers.js';
 
 /**
  * 이벤트 리스너 등록
@@ -39,23 +31,6 @@ function setupEventListeners() {
   elements.saveUrlBtn.addEventListener('click', handleSaveUrl);
   elements.showDevicesBtn.addEventListener('click', handleShowDevices);
   elements.logoutBtn.addEventListener('click', handleLogout);
-
-  // 주기 관리 이벤트
-  elements.cycleManageBtn.addEventListener('click', handleShowCycleManagement);
-  elements.cycleAddBtn.addEventListener('click', handleAddCycle);
-  elements.cycleFormCancelBtn.addEventListener('click', hideCycleModal);
-  elements.cycleForm.addEventListener('submit', handleSaveCycle);
-  elements.addDurationBtn.addEventListener('click', handleAddDuration);
-
-  // 주기 목록 이벤트 위임 (수정/삭제)
-  elements.cycleList.addEventListener('click', (e) => {
-    const id = parseInt(e.target.dataset.id, 10);
-    if (e.target.classList.contains('cycle-edit-btn')) {
-      handleEditCycle(id);
-    } else if (e.target.classList.contains('cycle-delete-btn')) {
-      handleDeleteCycle(id);
-    }
-  });
 
   // 디바이스 삭제 버튼 (이벤트 위임)
   elements.devicesList.addEventListener('click', (e) => {
@@ -92,8 +67,6 @@ async function initialize() {
     if (storageData.isAuthenticated) {
       elements.userEmail.textContent = storageData.email;
       showView('main');
-      // 주기 옵션 로드
-      handleLoadCycleOptions();
     } else if (storageData.email && storageData.identifier) {
       elements.emailDisplay.textContent = storageData.email;
       showView('pending');

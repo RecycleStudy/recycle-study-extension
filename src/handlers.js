@@ -1,12 +1,14 @@
 /**
- * 디바이스 관련 핸들러
+ * 이벤트 핸들러
  *
- * 디바이스 목록 조회, 삭제, 로그아웃 처리를 담당한다.
+ * 디바이스 등록, 인증 확인, URL 저장, 디바이스 관리, 로그아웃 등
+ * 사용자 액션에 대한 핸들러 함수를 정의한다.
  */
 
-import { UI_CONSTANTS } from '../constants.js';
-import { getDevices, deleteDevice } from '../api.js';
-import { getStorageData, clearStorage, validateStorageForAuth } from '../storage.js';
+import { STORAGE_KEYS } from './config.js';
+import { ERROR_CODES } from './constants.js';
+import { registerDevice, getDevices, deleteDevice, saveReviewUrl } from './api.js';
+import { setStorageData, clearStorage, validateStorageForAuth } from './storage.js';
 import {
   elements,
   showLoading,
@@ -14,8 +16,113 @@ import {
   showMessage,
   showView,
   handleApiError
-} from '../ui/index.js';
-import { formatDate } from '../utils.js';
+} from './ui.js';
+import { formatDate, isValidEmail } from './utils.js';
+
+/**
+ * 디바이스 등록 버튼 클릭 핸들러
+ */
+export async function handleRegister() {
+  const email = elements.emailInput.value.trim();
+
+  if (!email) {
+    showMessage('이메일을 입력해주세요.', 'error');
+    return;
+  }
+
+  if (!isValidEmail(email)) {
+    showMessage('유효한 이메일 형식이 아닙니다.', 'error');
+    return;
+  }
+
+  try {
+    showLoading();
+    const result = await registerDevice(email);
+
+    await setStorageData({
+      [STORAGE_KEYS.EMAIL]: result.email,
+      [STORAGE_KEYS.IDENTIFIER]: result.identifier,
+      [STORAGE_KEYS.IS_AUTHENTICATED]: false
+    });
+
+    elements.emailDisplay.textContent = result.email;
+    showView('pending');
+    showMessage('이메일로 인증 링크가 전송되었습니다.', 'success');
+  } catch (error) {
+    showMessage(error.message, 'error');
+  } finally {
+    hideLoading();
+  }
+}
+
+/**
+ * 인증 확인 버튼 클릭 핸들러
+ */
+export async function handleCheckAuth() {
+  try {
+    showLoading();
+    const storageData = await validateStorageForAuth();
+    const result = await getDevices(storageData.email, storageData.identifier);
+
+    await setStorageData({
+      [STORAGE_KEYS.IS_AUTHENTICATED]: true
+    });
+
+    elements.userEmail.textContent = result.email;
+    showView('main');
+    showMessage('인증이 완료되었습니다!', 'success');
+  } catch (error) {
+    if (error.code === ERROR_CODES.UNAUTHORIZED) {
+      showMessage('아직 인증이 완료되지 않았습니다.', 'info');
+    } else {
+      await handleApiError(error);
+    }
+  } finally {
+    hideLoading();
+  }
+}
+
+/**
+ * 다른 이메일로 등록 버튼 클릭 핸들러
+ */
+export async function handleReset() {
+  await clearStorage();
+  elements.emailInput.value = '';
+  showView('login');
+}
+
+/**
+ * URL 저장 버튼 클릭 핸들러
+ */
+export async function handleSaveUrl() {
+  try {
+    showLoading();
+
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+
+    if (!tab?.url) {
+      showMessage('현재 페이지의 URL을 가져올 수 없습니다.', 'error');
+      return;
+    }
+
+    const storageData = await validateStorageForAuth();
+    const result = await saveReviewUrl(storageData.identifier, tab.url);
+
+    elements.scheduleDates.innerHTML = '';
+    result.scheduledAts.forEach(date => {
+      const li = document.createElement('li');
+      li.textContent = formatDate(date);
+      elements.scheduleDates.appendChild(li);
+    });
+
+    elements.saveResult.classList.remove('hidden');
+    showMessage('저장되었습니다!', 'success');
+  } catch (error) {
+    await handleApiError(error);
+  } finally {
+    hideLoading();
+  }
+}
 
 /**
  * 디바이스 관리 버튼 클릭 핸들러
@@ -44,7 +151,7 @@ export async function handleShowDevices() {
 
       const deviceIdDiv = document.createElement('div');
       deviceIdDiv.className = 'device-id';
-      deviceIdDiv.textContent = device.identifier.substring(0, UI_CONSTANTS.DEVICE_ID_DISPLAY_LENGTH) + '...';
+      deviceIdDiv.textContent = device.identifier.substring(0, 20) + '...';
       deviceInfo.appendChild(deviceIdDiv);
 
       const deviceDateDiv = document.createElement('div');
@@ -120,12 +227,12 @@ export async function handleLogout() {
   try {
     showLoading();
     const storageData = await getStorageData();
-
+    
     // 인증된 상태라면 서버에 디바이스 삭제 요청
     if (storageData.email && storageData.identifier) {
       await deleteDevice(
-        storageData.email,
-        storageData.identifier,
+        storageData.email, 
+        storageData.identifier, 
         storageData.identifier // 자기 자신을 삭제
       );
     }
@@ -138,7 +245,6 @@ export async function handleLogout() {
   await clearStorage();
   elements.saveResult.classList.add('hidden');
   elements.devicesSection.classList.add('hidden');
-  elements.cycleSection.classList.add('hidden');
   showView('login');
   showMessage('로그아웃 되었습니다.', 'info');
 }

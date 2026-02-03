@@ -38,14 +38,6 @@
         <span id="user-email"></span>
       </div>
 
-      <!-- 복습 주기 선택 -->
-      <div class="form-group">
-        <label for="cycle-select">복습 주기</label>
-        <select id="cycle-select" class="cycle-select">
-          <!-- 동적으로 옵션 추가 -->
-        </select>
-      </div>
-
       <button id="save-url-btn" class="btn btn-primary btn-large">
         현재 페이지 저장
       </button>
@@ -59,16 +51,6 @@
       </div>
 
       <hr class="divider">
-
-      <!-- 주기 관리 버튼 -->
-      <button id="cycle-manage-btn" class="btn btn-secondary">복습 주기 관리</button>
-
-      <!-- 주기 관리 섹션 -->
-      <div id="cycle-section" class="hidden">
-        <h3>나의 복습 주기</h3>
-        <ul id="cycle-list" class="cycle-list"></ul>
-        <button id="cycle-add-btn" class="btn btn-secondary btn-small">+ 새 주기 추가</button>
-      </div>
 
       <button id="show-devices-btn" class="btn btn-secondary">디바이스 관리</button>
 
@@ -86,30 +68,6 @@
     <!-- 로딩 표시 -->
     <div id="loading" class="loading hidden">
       <div class="spinner"></div>
-    </div>
-  </div>
-
-  <!-- 주기 폼 모달 -->
-  <div id="cycle-modal" class="modal hidden">
-    <div class="modal-content">
-      <h3 id="cycle-modal-title">새 복습 주기</h3>
-      <form id="cycle-form">
-        <div class="form-group">
-          <label for="cycle-title-input">주기 이름</label>
-          <input type="text" id="cycle-title-input" placeholder="예: 시험 대비 단기 암기">
-        </div>
-        <div class="form-group">
-          <label>복습 간격 (등록 시점 기준)</label>
-          <div id="cycle-durations-container">
-            <!-- 동적으로 추가 -->
-          </div>
-          <button type="button" id="add-duration-btn" class="btn btn-text btn-small">+ 간격 추가</button>
-        </div>
-        <div class="form-actions">
-          <button type="button" id="cycle-form-cancel" class="btn btn-secondary">취소</button>
-          <button type="submit" id="cycle-form-submit" class="btn btn-primary">저장</button>
-        </div>
-      </form>
     </div>
   </div>
 
