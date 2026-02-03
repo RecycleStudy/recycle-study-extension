@@ -78,13 +78,73 @@ export async function deleteDevice(email, deviceIdentifier, targetDeviceIdentifi
  * 복습 URL 저장
  * @param {string} identifier - 디바이스 식별자
  * @param {string} targetUrl - 저장할 URL
+ * @param {Object} cycle - 복습 주기 { type: "DEFAULT", code } 또는 { type: "CUSTOM", id }
  * @returns {Promise<Object>} { url, scheduledAts }
  */
-export async function saveReviewUrl(identifier, targetUrl) {
+export async function saveReviewUrl(identifier, targetUrl, cycle) {
   return await sendApiRequest({
     endpoint: '/api/v1/reviews',
     method: 'POST',
     headers: { 'X-Device-Id': identifier },
-    body: { targetUrl }
+    body: { targetUrl, cycle }
+  });
+}
+
+/**
+ * 복습 주기 옵션 조회
+ * @param {string} identifier - 디바이스 식별자
+ * @returns {Promise<Object>} { defaultOptions, customOptions }
+ */
+export async function getCycleOptions(identifier) {
+  return await sendApiRequest({
+    endpoint: '/api/v1/cycles/custom',
+    method: 'GET',
+    headers: { 'X-Device-Id': identifier }
+  });
+}
+
+/**
+ * 커스텀 주기 생성
+ * @param {string} identifier - 디바이스 식별자
+ * @param {string} title - 주기 이름
+ * @param {string[]} durations - ISO 8601 Duration 배열
+ * @returns {Promise<Object>} { id, title, durations }
+ */
+export async function createCustomCycle(identifier, title, durations) {
+  return await sendApiRequest({
+    endpoint: '/api/v1/cycles/custom',
+    method: 'POST',
+    headers: { 'X-Device-Id': identifier },
+    body: { title, durations }
+  });
+}
+
+/**
+ * 커스텀 주기 수정
+ * @param {string} identifier - 디바이스 식별자
+ * @param {number} id - 주기 ID
+ * @param {string} title - 주기 이름
+ * @param {string[]} durations - ISO 8601 Duration 배열
+ * @returns {Promise<Object>} { id, title, durations }
+ */
+export async function updateCustomCycle(identifier, id, title, durations) {
+  return await sendApiRequest({
+    endpoint: `/api/v1/cycles/custom/${id}`,
+    method: 'PUT',
+    headers: { 'X-Device-Id': identifier },
+    body: { title, durations }
+  });
+}
+
+/**
+ * 커스텀 주기 삭제
+ * @param {string} identifier - 디바이스 식별자
+ * @param {number} id - 주기 ID
+ */
+export async function deleteCustomCycle(identifier, id) {
+  return await sendApiRequest({
+    endpoint: `/api/v1/cycles/custom/${id}`,
+    method: 'DELETE',
+    headers: { 'X-Device-Id': identifier }
   });
 }
