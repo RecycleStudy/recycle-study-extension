@@ -32,6 +32,10 @@ export const elements = {
   cycleSection: null,
   cycleList: null,
   cycleAddBtn: null,
+  notificationTimeBtn: null,
+  notificationSection: null,
+  notificationTimeInput: null,
+  notificationTimeSaveBtn: null,
   showDevicesBtn: null,
   devicesSection: null,
   devicesList: null,
@@ -76,6 +80,10 @@ export function initializeElements() {
   elements.cycleSection = document.getElementById('cycle-section');
   elements.cycleList = document.getElementById('cycle-list');
   elements.cycleAddBtn = document.getElementById('cycle-add-btn');
+  elements.notificationTimeBtn = document.getElementById('notification-time-btn');
+  elements.notificationSection = document.getElementById('notification-section');
+  elements.notificationTimeInput = document.getElementById('notification-time-input');
+  elements.notificationTimeSaveBtn = document.getElementById('notification-time-save-btn');
   elements.showDevicesBtn = document.getElementById('show-devices-btn');
   elements.devicesSection = document.getElementById('devices-section');
   elements.devicesList = document.getElementById('devices-list');

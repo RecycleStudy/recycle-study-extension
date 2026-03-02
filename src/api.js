@@ -148,3 +148,31 @@ export async function deleteCustomCycle(identifier, id) {
     headers: { 'X-Device-Id': identifier }
   });
 }
+
+/**
+ * 알림 시간 조회
+ * @param {string} identifier - 디바이스 식별자
+ * @returns {Promise<Object>} { notificationTime: "09:00:00" } or { notificationTime: null }
+ */
+export async function getNotificationTime(identifier) {
+  return await sendApiRequest({
+    endpoint: '/api/v1/members/notification-time',
+    method: 'GET',
+    headers: { 'X-Device-Id': identifier }
+  });
+}
+
+/**
+ * 알림 시간 업데이트
+ * @param {string} identifier - 디바이스 식별자
+ * @param {number} hour - 시 (0-23)
+ * @param {number} minute - 분 (0-59)
+ */
+export async function updateNotificationTime(identifier, hour, minute) {
+  return await sendApiRequest({
+    endpoint: '/api/v1/members/notification-time',
+    method: 'PATCH',
+    headers: { 'X-Device-Id': identifier },
+    body: { notificationTime: [hour, minute] }
+  });
+}
