@@ -38,6 +38,7 @@ export async function forceLogout(message) {
   await clearStorage();
   elements.saveResult.classList.add('hidden');
   elements.devicesSection.classList.add('hidden');
+  elements.notificationSection.classList.add('hidden');
   elements.emailInput.value = '';
   showView('login');
 

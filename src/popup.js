@@ -26,7 +26,9 @@ import {
   handleDeleteCycle,
   handleEditCycle,
   handleAddCycle,
-  handleAddDuration
+  handleAddDuration,
+  handleShowNotificationTime,
+  handleUpdateNotificationTime
 } from './handlers/index.js';
 
 /**
@@ -37,6 +39,8 @@ function setupEventListeners() {
   elements.checkAuthBtn.addEventListener('click', handleCheckAuth);
   elements.resetBtn.addEventListener('click', handleReset);
   elements.saveUrlBtn.addEventListener('click', handleSaveUrl);
+  elements.notificationTimeBtn.addEventListener('click', handleShowNotificationTime);
+  elements.notificationTimeSaveBtn.addEventListener('click', handleUpdateNotificationTime);
   elements.showDevicesBtn.addEventListener('click', handleShowDevices);
   elements.logoutBtn.addEventListener('click', handleLogout);
 

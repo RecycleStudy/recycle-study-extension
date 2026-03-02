@@ -139,6 +139,7 @@ export async function handleLogout() {
   elements.saveResult.classList.add('hidden');
   elements.devicesSection.classList.add('hidden');
   elements.cycleSection.classList.add('hidden');
+  elements.notificationSection.classList.add('hidden');
   showView('login');
   showMessage('로그아웃 되었습니다.', 'info');
 }
