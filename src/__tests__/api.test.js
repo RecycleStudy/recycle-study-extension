@@ -7,7 +7,9 @@ import {
   getCycleOptions,
   createCustomCycle,
   updateCustomCycle,
-  deleteCustomCycle
+  deleteCustomCycle,
+  getNotificationTime,
+  updateNotificationTime
 } from '../api.js';
 import { ERROR_CODES } from '../constants.js';
 
@@ -217,6 +219,55 @@ describe('api.js', () => {
           endpoint: '/api/v1/cycles/custom/1',
           method: 'DELETE',
           headers: { 'X-Device-Id': identifier }
+        }
+      });
+    });
+  });
+
+  describe('getNotificationTime', () => {
+    it('식별자를 헤더에 포함하여 알림 시간을 조회한다', async () => {
+      const identifier = 'my-device-id';
+      const mockResponse = { success: true, data: { notificationTime: '09:00:00' } };
+      sendMessageMock.mockResolvedValue(mockResponse);
+
+      const result = await getNotificationTime(identifier);
+
+      expect(sendMessageMock).toHaveBeenCalledWith({
+        type: 'API_REQUEST',
+        request: {
+          endpoint: '/api/v1/members/notification-time',
+          method: 'GET',
+          headers: { 'X-Device-Id': identifier }
+        }
+      });
+      expect(result).toEqual(mockResponse.data);
+    });
+
+    it('알림 시간이 설정되지 않은 경우 null을 반환한다', async () => {
+      const mockResponse = { success: true, data: { notificationTime: null } };
+      sendMessageMock.mockResolvedValue(mockResponse);
+
+      const result = await getNotificationTime('my-device-id');
+
+      expect(result.notificationTime).toBeNull();
+    });
+  });
+
+  describe('updateNotificationTime', () => {
+    it('[hour, minute] 배열로 알림 시간을 업데이트한다', async () => {
+      const identifier = 'my-device-id';
+      const mockResponse = { success: true, data: null };
+      sendMessageMock.mockResolvedValue(mockResponse);
+
+      await updateNotificationTime(identifier, 9, 0);
+
+      expect(sendMessageMock).toHaveBeenCalledWith({
+        type: 'API_REQUEST',
+        request: {
+          endpoint: '/api/v1/members/notification-time',
+          method: 'PATCH',
+          headers: { 'X-Device-Id': identifier },
+          body: { notificationTime: [9, 0] }
         }
       });
     });
