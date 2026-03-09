@@ -8,6 +8,7 @@ import { STORAGE_KEYS } from '../config.js';
 import { ERROR_CODES } from '../constants.js';
 import { registerDevice, getDevices } from '../api.js';
 import { setStorageData, clearStorage, validateStorageForAuth } from '../storage.js';
+import { handleLoadCycleOptions } from './cycle.js';
 import {
   elements,
   showLoading,
@@ -69,6 +70,7 @@ export async function handleCheckAuth() {
 
     elements.userEmail.textContent = result.email;
     showView('main');
+    await handleLoadCycleOptions();
     showMessage('인증이 완료되었습니다!', 'success');
   } catch (error) {
     if (error.code === ERROR_CODES.UNAUTHORIZED) {
