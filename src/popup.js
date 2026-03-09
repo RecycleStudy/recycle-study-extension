@@ -12,6 +12,8 @@ import {
   showMessage,
   hideCycleModal
 } from './ui/index.js';
+import { getNextReview } from './api.js';
+import { formatNextReviewDate } from './utils.js';
 import {
   handleRegister,
   handleCheckAuth,
@@ -98,6 +100,7 @@ async function initialize() {
       showView('main');
       // 주기 옵션 로드
       handleLoadCycleOptions();
+      loadNextReview(storageData.identifier);
     } else if (storageData.email && storageData.identifier) {
       elements.emailDisplay.textContent = storageData.email;
       showView('pending');
@@ -108,6 +111,22 @@ async function initialize() {
     console.error('초기화 오류:', error);
     await clearStorage();
     showView('login');
+  }
+}
+
+/**
+ * 다음 리뷰 정보 로드 및 표시
+ */
+async function loadNextReview(identifier) {
+  try {
+    const result = await getNextReview(identifier);
+    if (result.scheduledAt && result.count > 0) {
+      elements.nextReviewText.textContent =
+        `다음 리뷰: ${formatNextReviewDate(result.scheduledAt)} / 대기 중 ${result.count}개`;
+      elements.nextReviewInfo.classList.remove('hidden');
+    }
+  } catch (error) {
+    console.debug('다음 리뷰 정보 조회 실패:', error);
   }
 }
 

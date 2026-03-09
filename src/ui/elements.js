@@ -24,6 +24,8 @@ export const elements = {
 
   // 메인 화면
   userEmail: null,
+  nextReviewInfo: null,
+  nextReviewText: null,
   cycleSelect: null,
   saveUrlBtn: null,
   saveResult: null,
@@ -72,6 +74,8 @@ export function initializeElements() {
   elements.resetBtn = document.getElementById('reset-btn');
 
   elements.userEmail = document.getElementById('user-email');
+  elements.nextReviewInfo = document.getElementById('next-review-info');
+  elements.nextReviewText = document.getElementById('next-review-text');
   elements.cycleSelect = document.getElementById('cycle-select');
   elements.saveUrlBtn = document.getElementById('save-url-btn');
   elements.saveResult = document.getElementById('save-result');
