@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Recycle Study",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "복습 URL을 저장하고 스케줄에 따라 알림을 받는 익스텐션",
   "permissions": [
     "storage",
