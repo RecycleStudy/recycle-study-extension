@@ -13,6 +13,7 @@ import {
   showMessage,
   handleApiError
 } from '../ui/index.js';
+import { utcTimeStringToLocal, localTimeStringToUtcArray } from '../utils.js';
 
 /**
  * 알림 시간 설정 버튼 클릭 핸들러 (toggle)
@@ -31,7 +32,7 @@ export async function handleShowNotificationTime() {
     const result = await getNotificationTime(storageData.identifier);
 
     if (result.notificationTime) {
-      elements.notificationTimeInput.value = result.notificationTime.substring(0, 5);
+      elements.notificationTimeInput.value = utcTimeStringToLocal(result.notificationTime);
     } else {
       elements.notificationTimeInput.value = '';
     }
@@ -58,7 +59,7 @@ export async function handleUpdateNotificationTime() {
   try {
     showLoading();
     const storageData = await validateStorageForAuth();
-    const [hour, minute] = timeValue.split(':').map(Number);
+    const [hour, minute] = localTimeStringToUtcArray(timeValue);
     await updateNotificationTime(storageData.identifier, hour, minute);
     showMessage('알림 시간이 저장되었습니다.', 'success');
   } catch (error) {

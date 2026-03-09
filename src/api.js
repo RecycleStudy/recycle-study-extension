@@ -176,3 +176,16 @@ export async function updateNotificationTime(identifier, hour, minute) {
     body: { notificationTime: [hour, minute] }
   });
 }
+
+/**
+ * 다음 리뷰 정보 조회
+ * @param {string} identifier - 디바이스 식별자
+ * @returns {Promise<Object>} { scheduledAt, count }
+ */
+export async function getNextReview(identifier) {
+  return await sendApiRequest({
+    endpoint: '/api/v1/reviews/next',
+    method: 'GET',
+    headers: { 'X-Device-Id': identifier }
+  });
+}
